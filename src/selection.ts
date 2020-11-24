@@ -56,6 +56,9 @@ export function getSelection() {
     }
 
     selection.selectedText = selectedLine.trim();
+    // TODO https://github.com/Ikuyadeu/vscode-R/issues/438
+    // `selection.selectedText` to exclude comments ?
+    // e.g. `    selection.selectedText = selectedLine.trim();`
 
     return selection;
 }
@@ -248,7 +251,7 @@ export function extendSelection(line: number, getLine: (line: number) => string,
                 flagAbort = true;
             }
         }
-        
+
         curChar = nextChar;
     }
     if (flagAbort) {
