@@ -233,6 +233,12 @@ function getCurrentChunk(chunks: RMarkdownChunk[], line: number): RMarkdownChunk
     chunkEndLineAbove--;
   }
 
+  // Case: Cursor is below the last chunk
+  if (chunkEndLineAbove < line) {
+    // window.showInformationMessage(chunkEndLineAbove);
+    return undefined;
+  }
+
   // Case: Cursor is within chunk
   if (chunkEndLineAbove < chunkStartLineAtOrAbove) {
     line = chunkStartLineAtOrAbove;
@@ -256,14 +262,21 @@ function getCurrentChunk__CursorWithinChunk(chunks: RMarkdownChunk[], line: numb
 
   for (const id of ids) {
     const chunk = chunks.filter(e => e.id === id)[0];
-    if (chunk.startLine <= line && line <= chunk.endLine) {
+    const isChunkWithinCursor = chunk.startLine <= line && line <= chunk.endLine;
+    if (isChunkWithinCursor) {
       return chunk;
-    }
+    } else if (id === chunks.length)
+    // Case: Cursor outside of chunk
+      return undefined;
   }
 }
 
 function getPreviousChunk(chunks: RMarkdownChunk[], line: number): RMarkdownChunk {
   const currentChunk = getCurrentChunk(chunks, line);
+  // Case: Cursor is at or above the first chunk
+  if (currentChunk.id === 1) {
+    return undefined;
+  }
   // When cursor is below the last 'chunk end line', the definition of the previous chunk is the last chunk
   const previousChunkId = currentChunk.endLine < line ? currentChunk.id : currentChunk.id - 1;
   const previousChunk = chunks.filter(i => i.id === previousChunkId)[0];
@@ -272,6 +285,10 @@ function getPreviousChunk(chunks: RMarkdownChunk[], line: number): RMarkdownChun
 
 function getNextChunk(chunks: RMarkdownChunk[], line: number): RMarkdownChunk {
   const currentChunk = getCurrentChunk(chunks, line);
+  // Case: Cursor is at or above the first chunk
+  if (currentChunk.id === chunks.length) {
+    return undefined;
+  }
   // When cursor is above the first 'chunk start line', the definition of the next chunk is the first chunk
   const nextChunkId = line < currentChunk.startLine ? currentChunk.id : currentChunk.id + 1;
   const nextChunk = chunks.filter(i => i.id === nextChunkId)[0];
@@ -293,20 +310,32 @@ export async function runCurrentChunk(chunks: RMarkdownChunk[] = _getChunks(),
 }
 
 export async function runPreviousChunk(chunks: RMarkdownChunk[] = _getChunks(),
-                                       line: number = _getStartLine()): Promise<void> {
+                                       line: number = _getStartLine()): Promise<void | Thenable<string>> {
   const previousChunk = getPreviousChunk(chunks, line);
+  // Case: Cursor is at or above the first chunk
+  if (previousChunk === undefined) {
+    return window.showInformationMessage('There is no more code chunk above.')
+  }
   await runChunksInTerm([previousChunk.codeRange]);
 }
 
 export async function runNextChunk(chunks: RMarkdownChunk[] = _getChunks(),
-                                   line: number = _getStartLine()): Promise<void> {
+                                   line: number = _getStartLine()): Promise<void | Thenable<string>> {
   const nextChunk = getNextChunk(chunks, line);
+  // Case: Cursor is at or below the last chunk
+  if (nextChunk === undefined) {
+    return window.showInformationMessage('There is no more code chunk below.')
+  }
   await runChunksInTerm([nextChunk.codeRange]);
 }
 
 export async function runAboveChunks(chunks: RMarkdownChunk[] = _getChunks(),
-                                     line: number = _getStartLine()): Promise<void> {
+                                     line: number = _getStartLine()): Promise<void | Thenable<string>> {
   const previousChunk = getPreviousChunk(chunks, line);
+  // Case: Cursor is at or above the first chunk
+  if (previousChunk === undefined) {
+    return window.showInformationMessage('There is no more code chunk above.')
+  }
   const firstChunkId = 1;
   const previousChunkId = previousChunk.id;
 
@@ -320,9 +349,13 @@ export async function runAboveChunks(chunks: RMarkdownChunk[] = _getChunks(),
 }
 
 export async function runBelowChunks(chunks: RMarkdownChunk[] = _getChunks(),
-                                     line: number = _getStartLine()): Promise<void> {
+                                     line: number = _getStartLine()): Promise<void | Thenable<string>> {
 
   const nextChunk = getNextChunk(chunks, line);
+  // Case: Cursor is at or below the last chunk
+  if (nextChunk === undefined) {
+    return window.showInformationMessage('There is no more code chunk below.')
+  }
   const nextChunkId = nextChunk.id;
   const lastChunkId = chunks.length;
 
@@ -336,8 +369,12 @@ export async function runBelowChunks(chunks: RMarkdownChunk[] = _getChunks(),
 }
 
 export async function runCurrentAndBelowChunks(chunks: RMarkdownChunk[] = _getChunks(),
-                                               line: number = _getStartLine()): Promise<void> {
+                                               line: number = _getStartLine()): Promise<void | Thenable<string>> {
   const currentChunk = getCurrentChunk(chunks, line);
+  // Case: Cursor is below the last chunk
+  if (currentChunk === undefined) {
+    return window.showInformationMessage('There is no more code chunk below.')
+  }
   const currentChunkId = currentChunk.id;
   const lastChunkId = chunks.length;
 
@@ -383,9 +420,14 @@ export function goToNextChunk(chunks: RMarkdownChunk[] = _getChunks(),
 }
 
 export function selectCurrentChunk(chunks: RMarkdownChunk[] = _getChunks(),
-                                         line: number = _getStartLine()): void {
+                                         line: number = _getStartLine()): void | Thenable<string> {
   const editor = window.activeTextEditor;
   const currentChunk = getCurrentChunk__CursorWithinChunk(chunks, line);
+  // Case: Cursor outside of chunk
+  if (currentChunk === undefined) {
+      return window.showInformationMessage('This command only works when cursor is placed within code chunk.')
+  }
+
   const lines = editor.document.getText().split(/\r?\n/);
 
   editor.selection = new Selection(
