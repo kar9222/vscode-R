@@ -247,46 +247,55 @@
     "commands": [
       {
         "command": "r.workspaceViewer.refreshEntry",
+        "category": "R Workspace",
         "title": "Manual Refresh",
         "icon": "$(refresh)"
       },
       {
         "command": "r.workspaceViewer.view",
+        "category": "R Workspace",
         "title": "View",
         "icon": "$(open-preview)"
       },
       {
         "command": "r.workspaceViewer.clear",
+        "category": "R Workspace",
         "title": "Clear environment",
         "icon": "$(clear-all)"
       },
       {
         "command": "r.workspaceViewer.remove",
+        "category": "R Workspace",
         "title": "Remove",
         "icon": "$(close)"
       },
       {
         "command": "r.workspaceViewer.save",
+        "category": "R Workspace",
         "title": "Save workspace",
         "icon": "$(save)"
       },
       {
         "command": "r.workspaceViewer.load",
+        "category": "R Workspace",
         "title": "Load workspace",
         "icon": "$(folder-opened)"
       },
       {
         "command": "r.showHelp",
-        "title": "R: Show help"
+        "category": "R Help",
+        "title": "Show help"
       },
       {
         "command": "r.helpPanel.back",
-        "title": "R Help Panel: Go Back",
+        "category": "R Help",
+        "title": "Go Back",
         "icon": "$(arrow-left)"
       },
       {
         "command": "r.helpPanel.forward",
-        "title": "R Help Panel: Go Forward",
+        "category": "R Help",
+        "title": "Go Forward",
         "icon": "$(arrow-right)"
       },
       {
@@ -305,7 +314,7 @@
       },
       {
         "title": "Knit Rmd",
-        "category": "R",
+        "category": "R RMarkdown",
         "command": "r.knitRmd",
         "icon": {
           "light": "./images/DownloadFile.ico",
@@ -314,17 +323,17 @@
       },
       {
         "title": "Knit Rmd To PDF",
-        "category": "R",
+        "category": "R RMarkdown",
         "command": "r.knitRmdToPdf"
       },
       {
         "title": "Knit Rmd To HTML",
-        "category": "R",
+        "category": "R RMarkdown",
         "command": "r.knitRmdToHtml"
       },
       {
         "title": "Knit Rmd To All Formats",
-        "category": "R",
+        "category": "R RMarkdown",
         "command": "r.knitRmdToAll"
       },
       {
@@ -444,52 +453,52 @@
       },
       {
         "title": "Select Current Chunk",
-        "category": "R",
+        "category": "R RMarkdown",
         "command": "r.selectCurrentChunk"
       },
       {
         "title": "Run Current Chunk",
-        "category": "R",
+        "category": "R RMarkdown",
         "command": "r.runCurrentChunk"
       },
       {
         "title": "Run Previous Chunk",
-        "category": "R",
+        "category": "R RMarkdown",
         "command": "r.runPreviousChunk"
       },
       {
         "title": "Run Next Chunk",
-        "category": "R",
+        "category": "R RMarkdown",
         "command": "r.runNextChunk"
       },
       {
         "title": "Run Above Chunks",
-        "category": "R",
+        "category": "R RMarkdown",
         "command": "r.runAboveChunks"
       },
       {
         "title": "Run Current and Below Chunks",
-        "category": "R",
+        "category": "R RMarkdown",
         "command": "r.runCurrentAndBelowChunks"
       },
       {
         "title": "Run Below Chunks",
-        "category": "R",
+        "category": "R RMarkdown",
         "command": "r.runBelowChunks"
       },
       {
         "title": "Run All Chunks",
-        "category": "R",
+        "category": "R RMarkdown",
         "command": "r.runAllChunks"
       },
       {
         "title": "Go to Previous Chunk",
-        "category": "R",
+        "category": "R RMarkdown",
         "command": "r.goToPreviousChunk"
       },
       {
         "title": "Go to Next Chunk",
-        "category": "R",
+        "category": "R RMarkdown",
         "command": "r.goToNextChunk"
       },
       {
