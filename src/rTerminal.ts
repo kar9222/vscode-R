@@ -228,6 +228,7 @@ export async function runSelectionInTerm(moveCursor: boolean, useRepl = true): P
         await vscode.commands.executeCommand('cursorMove', { to: 'down', value: selection.linesDownToMoveCursor });
         await vscode.commands.executeCommand('cursorMove', { to: 'wrappedLineFirstNonWhitespaceCharacter' });
     }
+    // TODO
     if(useRepl && vscode.debug.activeDebugSession?.type === 'R-Debugger'){
         await sendRangeToRepl(selection.range);
     } else{
@@ -236,6 +237,18 @@ export async function runSelectionInTerm(moveCursor: boolean, useRepl = true): P
 }
 
 export async function runChunksInTerm(chunks: vscode.Range[]): Promise<void> {
+    // Decorate highlight background
+    const editor = vscode.window.activeTextEditor
+    const tempDecoration = vscode.window.createTextEditorDecorationType({
+        backgroundColor: new vscode.ThemeColor('editor.hoverHighlightBackground'),
+        isWholeLine: true
+    })
+    editor.setDecorations(tempDecoration, chunks)
+
+    setTimeout(() => {
+        editor.setDecorations(tempDecoration, [])
+    }, 200)
+
     const text = chunks
         .map((chunk) => vscode.window.activeTextEditor.document.getText(chunk).trim())
         .filter((chunk) => chunk.length > 0)

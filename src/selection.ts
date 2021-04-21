@@ -1,8 +1,9 @@
 'use strict';
 
-import { Position, Range, window } from 'vscode';
+import { Position, Range, window, ThemeColor } from 'vscode';
 
 import { LineCache } from './lineCache';
+import { activeEditorContext } from './rstudioapi';
 
 export function getWordOrSelection(): string {
     const selection = window.activeTextEditor.selection;
@@ -64,6 +65,22 @@ export function getSelection(): RSelection {
     }
 
     selection.selectedText = currentDocument.getText(selection.range).trim();
+
+    // Decorate highlight background
+    const n_line = selection.range.end.line - selection.range.start.line
+
+    if (n_line >= 5) {
+        const editor = window.activeTextEditor
+        const tempDecoration = window.createTextEditorDecorationType({
+            backgroundColor: new ThemeColor('editor.hoverHighlightBackground'),
+            isWholeLine: true
+        })
+        editor.setDecorations(tempDecoration, [selection.range])
+
+        setTimeout(() => {
+            editor.setDecorations(tempDecoration, [])
+        }, 200)
+    }
 
     return selection;
 }
@@ -259,7 +276,7 @@ export function extendSelection(line: number, getLine: (line: number) => string,
                 flagAbort = true;
             }
         }
-        
+
         curChar = nextChar;
     }
     if (flagAbort) {
