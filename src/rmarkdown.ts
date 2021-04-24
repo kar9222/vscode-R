@@ -1,7 +1,7 @@
 import {
   CancellationToken, CodeLens, CodeLensProvider,
   CompletionItem, CompletionItemProvider,
-  Event, EventEmitter, Position, Range, TextDocument, TextEditorDecorationType, window, Selection
+  Event, EventEmitter, Position, Range, TextDocument, TextEditorDecorationType, window, Selection, ThemeColor, TextEditorRevealType
 } from 'vscode';
 import { runChunksInTerm } from './rTerminal';
 import { config } from './util';
@@ -366,8 +366,24 @@ export async function runAllChunks(chunks: RMarkdownChunk[] = _getChunks()): Pro
 
 function goToChunk(chunk: RMarkdownChunk) {
   // Move cursor 1 line below 'chunk start line'
-  const line = chunk.startLine + 1;
-  window.activeTextEditor.selection = new Selection(line, 0, line, 0);
+  const startLine = chunk.startLine + 1;
+  const endLine = chunk.endLine - 1;
+  const editor = window.activeTextEditor;
+  const range = new Range(new Position(startLine, 0),
+                          new Position(endLine, 0));
+
+  // Reveal range by highlighting the scope and scrolling to it
+  const tempDecoration = window.createTextEditorDecorationType({
+    backgroundColor: new ThemeColor('editor.rangeHighlightBackground'),
+    isWholeLine: true
+  })
+  editor.setDecorations(tempDecoration, [range])
+  setTimeout(() => {
+      editor.setDecorations(tempDecoration, [])
+  }, 200)
+
+  editor.selection = new Selection(startLine, 0, startLine, 0);
+  editor.revealRange(range, TextEditorRevealType.InCenterIfOutsideViewport);
 }
 
 export function goToPreviousChunk(chunks: RMarkdownChunk[] = _getChunks(),
