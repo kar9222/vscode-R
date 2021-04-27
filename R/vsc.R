@@ -518,8 +518,8 @@ show_page_viewer <- function(url, title = NULL, ...,
 }
 
 options(
-  browser = show_browser,
-  viewer = show_viewer,
+  # browser = show_browser,
+  # viewer = show_viewer,
   page_viewer = show_page_viewer
 )
 
